@@ -27,7 +27,7 @@ export default async function Home() {
   const pageData: PageData = await fetchGraphQL(GET_PAGE_DATA, {
     path: "/sitecore/content/Starter Kit/Xcentium/Home",
   });
-  console.log("Page data:", pageData);
+
   return (
     <div className="flex flex-col justify-center items-center h-screen text-center bg-gray-100 p-5 rounded-lg shadow-md">
       <h1 className="text-4xl font-bold text-gray-800 mb-5">
