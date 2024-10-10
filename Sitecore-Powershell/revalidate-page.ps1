@@ -23,7 +23,7 @@ function Get-PageDetails {
                 $relativePath = "/"
             } 
             
-            $relativePath = $relativePath -replace '\s+', '-'
+            $relativePath = $relativePath.ToLower() -replace '\s+', '-'
             
             return @{
                 SiteUrl      = $siteUrl
@@ -49,6 +49,7 @@ if (-not $relativePath) {
     Exit
 }
 
+
 $body = @{
     pages = @($relativePath)
 } | ConvertTo-Json
@@ -62,8 +63,8 @@ try {
     
     if ($response.revalidated) {
         $revalidatedPages = $response.pages -join ", "
-        $message = "Successfully revalidated page: $revalidatedPages`nTimestamp: $($response.now)"
-        Show-Alert ("Revalidation Successful. " + $message)
+        #$message = "Successfully revalidated page: $revalidatedPages`nTimestamp: $($response.now)"
+        #Show-Alert ("Revalidation Successful. " + $message)
     }
     else {
         Show-Alert "Revalidation Failed. The API responded, but revalidation was not successful."
