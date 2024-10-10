@@ -2,6 +2,9 @@ import { Metadata } from "next";
 import { fetchGraphQL } from "@/util/sitecoreClient";
 import { GET_PAGE_DATA } from "@/util/queries";
 
+import { headers } from "next/headers";
+//import { usePathname } from "next/navigation";
+
 export const metadata: Metadata = {
   title: "Hello World with Timestamp",
 };
@@ -22,12 +25,14 @@ interface PageData {
   item: PageItem;
 }
 
-export default async function Home() {
+export default async function PlatformsPage() {
   const timestamp = await getTimestamp();
+  const headersList = headers();
+  const pathname = headersList.get("x-pathname") || "";
+  console.log("Page server path:", pathname);
   const pageData: PageData = await fetchGraphQL(GET_PAGE_DATA, {
-    path: "/sitecore/content/Starter Kit/Xcentium/Home",
+    path: "/sitecore/content/Starter Kit/Xcentium/Home/services",
   });
-  console.log("Page data:", pageData);
   return (
     <div className="flex flex-col justify-center items-center h-screen text-center bg-gray-100 p-5 rounded-lg shadow-md">
       <h1 className="text-4xl font-bold text-gray-800 mb-5">
