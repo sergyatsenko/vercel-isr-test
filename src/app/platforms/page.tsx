@@ -39,7 +39,10 @@ export default async function PlatformsPage() {
         {pageData.item.Title.value}
       </h1>
       <h2 className="text-gray-600 text-2xl">{pageData.item.Heading.value}</h2>
-      <p className="text-gray-600">{pageData.item.Content.value}</p>
+      <div
+        className="text-gray-600"
+        dangerouslySetInnerHTML={{ __html: pageData.item.Content.value }}
+      ></div>
       <p className="text-gray-600">Generated at: {timestamp}</p>
     </div>
   );
