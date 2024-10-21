@@ -1,22 +1,30 @@
 # Script to revalidate Next.js pages based on Sitecore item
-$secret = "welcome!"
-$sitePathUrlMapping = @{
-    "/sitecore/content/Starter Kit/Bennett Jones" = "https://vercel-isr-test.vercel.app/api/revalidate"
-    "/sitecore/content/Starter Kit/Default"       = "https://vercel-isr-test.vercel.app/api/revalidate"
-    "/sitecore/content/Starter Kit/DGA"           = "https://vercel-isr-test.vercel.app/api/revalidate"
-    "/sitecore/content/Starter Kit/Xcentium"      = "https://vercel-isr-test.vercel.app/api/revalidate"
-}
 
 function Get-PageDetails {
     param(
         [Parameter(Mandatory = $true)]
         [Sitecore.Data.Items.Item]$Item
     )
+
+    # Get the "Revalidate Plugin Configuration" item
+    $configItem = Get-Item -Path "master:" -ID "{1FD49D13-CFB4-459D-BFAB-A8C3024686A5}"
+    
+    if (-not $configItem) {
+        Write-Error "Revalidate Plugin Configuration item not found."
+        return $null
+    }
+
     $itemPath = $Item.Paths.FullPath
-    foreach ($sitePath in $sitePathUrlMapping.Keys) {
-        if ($itemPath.StartsWith($sitePath, [System.StringComparison]::OrdinalIgnoreCase)) {
-            $siteUrl = $sitePathUrlMapping[$sitePath]
-            $relativePath = $itemPath.Substring($sitePath.Length)
+
+    # Iterate through children of the configuration item
+    foreach ($childItem in $configItem.Children) {
+        $referencedItemID = $childItem.Fields["Site Root"].Value
+        $siteRootItem = Get-Item -Path "master:" -ID $referencedItemID
+        if ($siteRootItem -and $itemPath.StartsWith($siteRootItem.Paths.FullPath, [System.StringComparison]::OrdinalIgnoreCase)) {
+            $siteUrl = $childItem.Fields["Revalidate API Url"].Value
+            $secret = $childItem.Fields["Secret"].Value
+            
+            $relativePath = $itemPath.Substring($siteRootItem.Paths.FullPath.Length)
             
             $relativePath = $relativePath -ireplace '^/home(?=/|$)', ''
             if ([string]::IsNullOrWhiteSpace($relativePath)) {
@@ -27,10 +35,12 @@ function Get-PageDetails {
             
             return @{
                 SiteUrl      = $siteUrl
+                Secret       = $secret
                 RelativePath = $relativePath
             }
         }
     }
+
     return $null
 }
 
@@ -41,14 +51,20 @@ if (-not $item.Fields["__Renderings"]) {
 }
 
 $pageDetails = Get-PageDetails -Item $item
+
+if (-not $pageDetails) {
+    Show-Alert "Unable to determine the configuration for this item..."
+    Exit
+}
+
 $apiUrl = $pageDetails.SiteUrl
+$secret = $pageDetails.Secret
 $relativePath = $pageDetails.RelativePath
 
 if (-not $relativePath) {
     Show-Alert "Unable to determine the relative path for this item..."
     Exit
 }
-
 
 $body = @{
     pages = @($relativePath)
@@ -61,12 +77,7 @@ try {
     
     $response = Invoke-RestMethod -Uri $postUrl -Method Post -Body $body -ContentType "application/json"
     
-    if ($response.revalidated) {
-        $revalidatedPages = $response.pages -join ", "
-        #$message = "Successfully revalidated page: $revalidatedPages`nTimestamp: $($response.now)"
-        #Show-Alert ("Revalidation Successful. " + $message)
-    }
-    else {
+    if (!$response.revalidated) {
         Show-Alert "Revalidation Failed. The API responded, but revalidation was not successful."
     }
 }
