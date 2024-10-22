@@ -26,7 +26,7 @@ A few example pages are provided: `/src/app/page.tsx`, `/src/app/platforms/page.
 
 ### Sitecore PowerShell
 
-The Sitecore PowerShell script (`vercel-test/Sitecore-Powershell/revalidate-page.ps1`) is designed to be run from the Sitecore Content Editor. Here's how it works:
+The Sitecore PowerShell script (`vercel-test/Sitecore-Powershell/revalidate-page.ps1`) is designed to be run from the Sitecore Content Editor. It's included in the Sitecore package, so no need to take extra steps to get it to your Sitecore instance. Here's how it works:
 
 1. It retrieves configuration details based on the current Sitecore item.
 2. It determines the relative path of the item within the site structure.
