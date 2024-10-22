@@ -41,10 +41,10 @@ Set up the following environment variables:
 
 1. In your local development environment, create a `.env.local` file in the project root with the following content:
 
-   ````
+   ```
    REVALIDATION_SECRET=your_secret_here
-   SITECORE_API_KEY=your_sitecore_api_key_here   ```
-   ````
+   SITECORE_API_KEY=your_sitecore_api_key_here
+   ```
 
    `REVALIDATION_SECRET` can be any string value, it's used to verify the request to the Revalidate API
    `SITECORE_API_KEY` is your Sitecore API key, it's used to authenticate the request to the Revalidate API
