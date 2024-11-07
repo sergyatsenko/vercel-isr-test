@@ -65,9 +65,12 @@ if (-not $relativePath) {
     Show-Alert "Unable to determine the relative path for this item..."
     Exit
 }
+$language = $item.Language
+$languageName = $language.Name.ToLower()
 
 $body = @{
-    pages = @($relativePath)
+    locale = $languageName
+    pages  = @($relativePath)
 } | ConvertTo-Json
 
 try {

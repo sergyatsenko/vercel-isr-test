@@ -1,0 +1,45 @@
+{
+	"info": {
+		"_postman_id": "e388260f-5653-4e5c-a6ae-3edbbb824d7c",
+		"name": "Revalidate plugin",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "3189063"
+	},
+	"item": [
+		{
+			"name": "revalidate page",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"pages\" : [\n        \"/about\"\n    ]\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:3000/api/revalidate?secret=br_revalidate_secret",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "3000",
+					"path": [
+						"api",
+						"revalidate"
+					],
+					"query": [
+						{
+							"key": "secret",
+							"value": "br_revalidate_secret"
+						}
+					]
+				}
+			},
+			"response": []
+		}
+	]
+}
